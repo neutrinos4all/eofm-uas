@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://fhsl.eng.buffalo.edu/EOFM/EOFMC.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<eofms>
+    <userdefinedtype name="tFlyState">{Takeoff,Flying,Landed,Crashed}</userdefinedtype>
+    <userdefinedtype name="tXDirectionMovement">{CyclicForward,CyclicBackward}</userdefinedtype>
+    <userdefinedtype name="tYDirectionMovement">{PedalLeft,PedalRight}</userdefinedtype> <!-- simplistic (for weathervaning, neglects banking), but easier to model -->
+    <userdefinedtype name="tZDirectionMovement">{CollectiveUp,CollectiveDown}</userdefinedtype>
+    
+    <userdefinedtype name="tEngineState">{On,Off}</userdefinedtype>
+    <userdefinedtype name="tRotorTurnRate">{High,Low}</userdefinedtype>
+    <userdefinedtype name="tAltitudeState">{High,Low}</userdefinedtype>
+    <userdefinedtype name="tAutoRotate">{Success,Failure}</userdefinedtype>
+    
+    <userdefinedtype name="tFuelStatus1">{Present,Absent}</userdefinedtype>
+    <userdefinedtype name="tFuelStatus2">{Present,Absent}</userdefinedtype>
+    <userdefinedtype name="tFuelStatus3">{Present,Absent}</userdefinedtype>
+    <userdefinedtype name="tFuelStatus4">{Present,Absent}</userdefinedtype>
+
+<!-- Left out until I can figure out how to make this work with FuelStatus
+    <userdefinedtype name="tFuelGauge1">{Good,Empty}</userdefinedtype>
+    <userdefinedtype name="tFuelGauge2">{Good,Empty}</userdefinedtype>
+    <userdefinedtype name="tFuelGauge3">{Good,Empty}</userdefinedtype>
+    <userdefinedtype name="tFuelGauge4">{Good,Empty}</userdefinedtype>
+-->
+    
+    <userdefinedtype name="tSolenoidState1">{Open,Closed}</userdefinedtype>
+    <userdefinedtype name="tSolenoidState2">{Open,Closed}</userdefinedtype>
+    <userdefinedtype name="tSolenoidState3">{Open,Closed}</userdefinedtype>
+    <userdefinedtype name="tSolenoidState4">{Open,Closed}</userdefinedtype>
+    
+    <userdefinedtype name="tFuelFlow">{Flowing,Stopped}</userdefinedtype>
+    <userdefinedtype name="tBoostPumpState">{On,Off}</userdefinedtype>
+    <userdefinedtype name="tTanksInUse">{T1,T2,T3,T4}</userdefinedtype>
+    
+    <humanoperator name="pPilot">
+        <inputvariable name="iCyclic" basictype="tXDirectionMovement"/>
+        <inputvariable name="iRudder" basictype="tYDirectionMovement"/>
+        <inputvariable name="iCollective" basictype="tZDirectionMovement"/>
+        
+        <localvariable name="lSolenoid1" userdefinedtype="tSolenoidState1">
+            <initialvalue>Open</initialvalue>
+        </localvariable>
+        <localvariable name="lSolenoid2" userdefinedtype="tSolenoidState2">
+            <initialvalue>Open</initialvalue>
+        </localvariable>
+        <localvariable name="lSolenoid3" userdefinedtype="tSolenoidState3">
+            <initialvalue>Open</initialvalue>
+        </localvariable>
+        <localvariable name="lSolenoid4" userdefinedtype="tSolenoidState4">
+            <initialvalue>Open</initialvalue>
+        </localvariable>
+        
+        <localvariable name="lAbleTank1" userdefinedtype="tFuelStatus1">
+            <initialvalue>Present</initialvalue>
+        </localvariable>
+        <localvariable name="lAbleTank2" userdefinedtype="tFuelStatus2">
+            <initialvalue>Present</initialvalue>
+        </localvariable>
+        <localvariable name="lAbleTank3" userdefinedtype="tFuelStatus3">
+            <initialvalue>Present</initialvalue>
+        </localvariable>
+        <localvariable name="lAbleTank4" userdefinedtype="tFuelStatus4">
+            <initialvalue>Present</initialvalue>
+        </localvariable>
+        
+        <localvariable name="lRunBoostPump" userdefinedtype="tBoostPumpState">
+            <initialvalue>On</initialvalue>
+        </localvariable>
+        
+        <localvariable name="lGoodFuelFlow" userdefinedtype="tFuelFlow">
+            <initialvalue>Flowing</initialvalue>
+        </localvariable>
+        
+        <localvariable name="lPoweredFlight" userdefinedtype="tEngineState">
+            <initialvalue>On</initialvalue>
+        </localvariable>
+        
+        <humanaction name="hSetSolenoid1" behavior="setvalue" userdefinedtype="tSolenoidState1"></humanaction>
+        <humanaction name="hSetSolenoid2" behavior="setvalue" userdefinedtype="tSolenoidState2"></humanaction>
+        <humanaction name="hSetSolenoid3" behavior="setvalue" userdefinedtype="tSolenoidState3"></humanaction>
+        <humanaction name="hSetSolenoid4" behavior="setvalue" userdefinedtype="tSolenoidState4"></humanaction>
+        
+        <humanaction name="hSelectFuelTanks" behavior="setvalue" userdefinedtype="tTanksInUse"></humanaction>
+        <humanaction name="hSetBoostPump" behavior="setvalue" userdefinedtype="tBoostPumpState"></humanaction>
+        
+        <humanaction name="hApplyCyclic" behavior="toggle"/>
+        <humanaction name="hApplyRudder" behavior="toggle"/>
+        <humanaction name="hApplyCollective" behavior="toggle"/>
+        
+        <eofm>
+            <activity name="aGreenFuelTankStatus">
+                <precondition>lAbleTank1 OR lAbleTank2 OR lAbleTank3 OR lAbleTank4</precondition>
+                <decomposition operator="ord">
+                    <activity name="aSelectTank1">
+                        <decomposition>
+                            <action humanaction="hSetSolenoid1"></action>
+                        </decomposition>
+                    </activity>
+                </decomposition>
+            </activity>
+        </eofm>
+    </humanoperator>
+</eofms>
