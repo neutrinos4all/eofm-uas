@@ -1,104 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="http://fhsl.eng.buffalo.edu/EOFM/EOFMC.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-
-<eofms>
-    <userdefinedtype name="tFlyState">{Takeoff,Flying,Landed,Crashed}</userdefinedtype>
-    <userdefinedtype name="tXDirectionMovement">{CyclicForward,CyclicBackward}</userdefinedtype>
-    <userdefinedtype name="tYDirectionMovement">{PedalLeft,PedalRight}</userdefinedtype> <!-- simplistic (for weathervaning, neglects banking), but easier to model -->
-    <userdefinedtype name="tZDirectionMovement">{CollectiveUp,CollectiveDown}</userdefinedtype>
-    
-    <userdefinedtype name="tEngineState">{On,Off}</userdefinedtype>
-    <userdefinedtype name="tRotorTurnRate">{High,Low}</userdefinedtype>
-    <userdefinedtype name="tAltitudeState">{High,Low}</userdefinedtype>
-    <userdefinedtype name="tAutoRotate">{Success,Failure}</userdefinedtype>
-    
-    <userdefinedtype name="tFuelStatus1">{Present,Absent}</userdefinedtype>
-    <userdefinedtype name="tFuelStatus2">{Present,Absent}</userdefinedtype>
-    <userdefinedtype name="tFuelStatus3">{Present,Absent}</userdefinedtype>
-    <userdefinedtype name="tFuelStatus4">{Present,Absent}</userdefinedtype>
-
-<!-- Left out until I can figure out how to make this work with FuelStatus
-    <userdefinedtype name="tFuelGauge1">{Good,Empty}</userdefinedtype>
-    <userdefinedtype name="tFuelGauge2">{Good,Empty}</userdefinedtype>
-    <userdefinedtype name="tFuelGauge3">{Good,Empty}</userdefinedtype>
-    <userdefinedtype name="tFuelGauge4">{Good,Empty}</userdefinedtype>
--->
-    
-    <userdefinedtype name="tSolenoidState1">{Open,Closed}</userdefinedtype>
-    <userdefinedtype name="tSolenoidState2">{Open,Closed}</userdefinedtype>
-    <userdefinedtype name="tSolenoidState3">{Open,Closed}</userdefinedtype>
-    <userdefinedtype name="tSolenoidState4">{Open,Closed}</userdefinedtype>
-    
-    <userdefinedtype name="tFuelFlow">{Flowing,Stopped}</userdefinedtype>
-    <userdefinedtype name="tBoostPumpState">{On,Off}</userdefinedtype>
-    <userdefinedtype name="tTanksInUse">{T1,T2,T3,T4}</userdefinedtype>
+<?xml-model href="file:/C:/Users/mbolton/Dropbox/Projects/Army%20YIP/EOFMCe/EOFMCe.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<eofms errornum="0" allowspecific="false">
+    <userdefinedtype name="tOnOff">{On,Off}</userdefinedtype>
+    <userdefinedtype name="tFuelStatus">{Present,Absent}</userdefinedtype>
+    <userdefinedtype name="tFuelGauge">{Good,Empty}</userdefinedtype>
+    <userdefinedtype name="tSolenoid">{Open,Closed}</userdefinedtype>
     
     <humanoperator name="pPilot">
-        <inputvariable name="iCyclic" basictype="tXDirectionMovement"/>
-        <inputvariable name="iRudder" basictype="tYDirectionMovement"/>
-        <inputvariable name="iCollective" basictype="tZDirectionMovement"/>
         
-        <localvariable name="lSolenoid1" userdefinedtype="tSolenoidState1">
-            <initialvalue>Open</initialvalue>
-        </localvariable>
-        <localvariable name="lSolenoid2" userdefinedtype="tSolenoidState2">
-            <initialvalue>Open</initialvalue>
-        </localvariable>
-        <localvariable name="lSolenoid3" userdefinedtype="tSolenoidState3">
-            <initialvalue>Open</initialvalue>
-        </localvariable>
-        <localvariable name="lSolenoid4" userdefinedtype="tSolenoidState4">
-            <initialvalue>Open</initialvalue>
-        </localvariable>
+        <inputvariable name="iSolenoid1" userdefinedtype="tSolenoid"/>
+        <inputvariable name="iSolenoid2" userdefinedtype="tSolenoid"/>
+        <inputvariable name="iSolenoid3" userdefinedtype="tSolenoid"/>
+        <inputvariable name="iSolenoid4" userdefinedtype="tSolenoid"/>
         
-        <localvariable name="lAbleTank1" userdefinedtype="tFuelStatus1">
-            <initialvalue>Present</initialvalue>
-        </localvariable>
-        <localvariable name="lAbleTank2" userdefinedtype="tFuelStatus2">
-            <initialvalue>Present</initialvalue>
-        </localvariable>
-        <localvariable name="lAbleTank3" userdefinedtype="tFuelStatus3">
-            <initialvalue>Present</initialvalue>
-        </localvariable>
-        <localvariable name="lAbleTank4" userdefinedtype="tFuelStatus4">
-            <initialvalue>Present</initialvalue>
-        </localvariable>
+        <inputvariable name="iFuelStatus1" userdefinedtype="tSolenoid"/>
+        <inputvariable name="iFuelStatus2" userdefinedtype="tSolenoid"/>
+        <inputvariable name="iFuelStatus3" userdefinedtype="tSolenoid"/>
+        <inputvariable name="iFuelStatus4" userdefinedtype="tSolenoid"/>
         
-        <localvariable name="lRunBoostPump" userdefinedtype="tBoostPumpState">
-            <initialvalue>On</initialvalue>
-        </localvariable>
+        <inputvariable name="iBoostPumpState" userdefinedtype="tOnOff"/>  
+        <inputvariable name="iEngineState" userdefinedtype="tOnOff"/>  
         
-        <localvariable name="lGoodFuelFlow" userdefinedtype="tFuelFlow">
-            <initialvalue>Flowing</initialvalue>
-        </localvariable>
+        <humanaction name="hToggleSolenoid1" behavior="autoreset"/>  
+        <humanaction name="hToggleSolenoid2" behavior="autoreset"/>  
+        <humanaction name="hToggleSolenoid3" behavior="autoreset"/>  
+        <humanaction name="hToggleSolenoid4" behavior="autoreset"/>  
         
-        <localvariable name="lPoweredFlight" userdefinedtype="tEngineState">
-            <initialvalue>On</initialvalue>
-        </localvariable>
+        <humanaction name="hToggleBoostPump" behavior="autoreset"/>  
+        <humanaction name="hToggleEngine" behavior="autoreset"/>  
         
-        <humanaction name="hSetSolenoid1" behavior="setvalue" userdefinedtype="tSolenoidState1"></humanaction>
-        <humanaction name="hSetSolenoid2" behavior="setvalue" userdefinedtype="tSolenoidState2"></humanaction>
-        <humanaction name="hSetSolenoid3" behavior="setvalue" userdefinedtype="tSolenoidState3"></humanaction>
-        <humanaction name="hSetSolenoid4" behavior="setvalue" userdefinedtype="tSolenoidState4"></humanaction>
-        
-        <humanaction name="hSelectFuelTanks" behavior="setvalue" userdefinedtype="tTanksInUse"></humanaction>
-        <humanaction name="hSetBoostPump" behavior="setvalue" userdefinedtype="tBoostPumpState"></humanaction>
-        
-        <humanaction name="hApplyCyclic" behavior="toggle"/>
-        <humanaction name="hApplyRudder" behavior="toggle"/>
-        <humanaction name="hApplyCollective" behavior="toggle"/>
+<!-- In the select/deselect tank activities below, does having the fuel and solenoid status tightly coupled still allow for situations where fuel could be present but the solenoid is closed, but fuel is still present in the tank? Is the converse also possible? -->
         
         <eofm>
-            <activity name="aGreenFuelTankStatus">
-                <precondition>lAbleTank1 OR lAbleTank2 OR lAbleTank3 OR lAbleTank4</precondition>
+            <activity name="aRespondToFuelChange">
+                <precondition>iFuelStatus1 = Absent AND iSolenoid1 = Open OR iFuelStatus2 = Absent AND iSolenoid2 = Open OR iFuelStatus3 = Absent AND iSolenoid3 = Open OR iFuelStatus4 = Absent AND iSolenoid4 = Open</precondition>
                 <decomposition operator="ord">
-                    <activity name="aSelectTank1">
-                        <decomposition>
-                            <action humanaction="hSetSolenoid1"></action>
+                    <activity name="aDeselectTanks">
+                        <decomposition operator="or_seq">
+                            <activity name="aDeselectTank1">
+                                <precondition>iFuelStatus1 = Absent AND iSolenoid1 = Open</precondition>
+                                <completioncondition>iFuelStatus1 = Absent AND iSolenoid1 = Closed</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid1"></action>
+                                </decomposition>
+                            </activity>
+                            <activity name="aDeselectTank2">
+                                <precondition>iFuelStatus2 = Absent AND iSolenoid2 = Open</precondition>
+                                <completioncondition>iFuelStatus2 = Absent AND iSolenoid2 = Closed</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid2"></action>
+                                </decomposition>
+                            </activity>
+                            <activity name="aDeselectTank3">
+                                <precondition>iFuelStatus3 = Absent AND iSolenoid3 = Open</precondition>
+                                <completioncondition>iFuelStatus3 = Absent AND iSolenoid3 = Closed</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid3"></action>
+                                </decomposition>
+                            </activity>
+                            <activity name="aDeselectTank4">
+                                <precondition>iFuelStatus4 = Absent AND iSolenoid4 = Open</precondition>
+                                <completioncondition>iFuelStatus4 = Absent AND iSolenoid4 = Closed</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid4"></action>
+                                </decomposition>
+                            </activity>
+                        </decomposition>
+                    </activity>
+                    <activity name="aSelectTanks">
+                        <completioncondition>((iFuelStatus1 = Present AND iSolenoid1 = Open) OR (iFuelStatus2 = Present AND iSolenoid2 = Open) OR (iFuelStatus3 = Present AND iSolenoid3 = Open) OR (iFuelStatus4 = Present AND iSolenoid4 = Open)) OR (iFuelStatus1 = Absent AND iFuelStatus2 = Absent AND iFuelStatus3 = Absent AND iFuelStatus4 = Absent)</completioncondition>
+                        <decomposition operator="or_seq">
+                            <activity name="aSelectTank1">
+                                <precondition>iFuelStatus1 = Present AND iSolenoid1 = Closed</precondition>
+                                <completioncondition>iFuelStatus1 = Present AND iSolenoid1 = Open OR iFuelStatus1 = Absent</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid1"></action>
+                                </decomposition>
+                            </activity>
+                            <activity name="aSelectTank2">
+                                <precondition>iFuelStatus2 = Present AND iSolenoid2 = Closed</precondition>
+                                <completioncondition>iFuelStatus2 = Present AND iSolenoid2 = Open OR iFuelStatus2 = Absent</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid2"></action>
+                                </decomposition>
+                            </activity>
+                            <activity name="aSelectTank3">
+                                <precondition>iFuelStatus3 = Present AND iSolenoid3 = Closed</precondition>
+                                <completioncondition>iFuelStatus3 = Present AND iSolenoid3 = Open OR iFuelStatus3 = Absent</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid3"></action>
+                                </decomposition>
+                            </activity>
+                            <activity name="aSelectTank4">
+                                <precondition>iFuelStatus4 = Present AND iSolenoid4 = Closed</precondition>
+                                <completioncondition>iFuelStatus4 = Present AND iSolenoid4 = Open OR iFuelStatus4 = Absent</completioncondition>
+                                <decomposition operator="ord">
+                                    <action humanaction="hToggleSolenoid4"></action>
+                                </decomposition>
+                            </activity>
                         </decomposition>
                     </activity>
                 </decomposition>
             </activity>
         </eofm>
+        
+        <eofm>
+            <activity name="aRespondToNoFuel">
+                <precondition>(iBoostPumpState = On OR iEngineState = On) AND iFuelStatus1 = Absent AND iSolenoid1 = Closed AND iFuelStatus2 = Absent AND iSolenoid2 = Closed AND iFuelStatus3 = Absent AND iSolenoid3 = Closed AND iFuelStatus4 = Absent AND iSolenoid4 = Closed</precondition>
+                <completioncondition>iBoostPumpState = Off AND iEngineState = Off</completioncondition>
+                <decomposition operator="ord">
+                    <activity name="aTurnOffBoostPump">
+                        <precondition>iBoostPumpState = On</precondition>
+                        <completioncondition>iBoostPumpState = Off</completioncondition>
+                        <decomposition operator="ord">
+                            <action humanaction="hToggleBoostPump"/>
+                        </decomposition>
+                    </activity>
+                    <activity name="aTurnOffEngine">
+                        <precondition>iEngineState = On</precondition>
+                        <completioncondition>iEngineState = Off</completioncondition>
+                        <decomposition operator="ord">
+                            <action humanaction="hToggleEngine"/>
+                        </decomposition>
+                    </activity>
+                </decomposition>
+            </activity>
+        </eofm>
+        
+        <eofm>
+            <activity name="aRespondToFuel">
+                <precondition>(iBoostPumpState = Off OR iEngineState = Off) AND ((iFuelStatus1 = Present AND iSolenoid1 = Open) OR (iFuelStatus2 = Present AND iSolenoid2 = Open) OR (iFuelStatus3 = Present AND iSolenoid3 = Open) OR (iFuelStatus4 = Present AND iSolenoid4 = Open))</precondition>
+                <completioncondition>iBoostPumpState = On AND iEngineState = On</completioncondition>
+                <decomposition operator="ord">
+                    <activity name="aTurnOnBoostPump">
+                        <precondition>iBoostPumpState = Off</precondition>
+                        <completioncondition>iBoostPumpState = On</completioncondition>
+                        <decomposition operator="ord">
+                            <action humanaction="hToggleBoostPump"/>
+                        </decomposition>
+                    </activity>
+                    <activity name="aTurnOnEngine">
+                        <precondition>iEngineState = Off</precondition>
+                        <completioncondition>iEngineState = On</completioncondition>
+                        <decomposition operator="ord">
+                            <action humanaction="hToggleEngine"/>
+                        </decomposition>
+                    </activity>
+                </decomposition>
+            </activity>
+        </eofm>
+        
     </humanoperator>
 </eofms>
