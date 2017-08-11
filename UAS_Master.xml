@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="file:/C:/Users/mbolton/Dropbox/Projects/Army%20YIP/EOFMCe/EOFMCe.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<eofms errornum="0" allowspecific="false">
+<eofms errornum="1" allowspecific="false">
     <userdefinedtype name="tOnOff">{On,Off}</userdefinedtype>
     <userdefinedtype name="tFuelStatus">{Present,Absent}</userdefinedtype>
-    <userdefinedtype name="tFuelGauge">{Good,Empty}</userdefinedtype>
+    <!-- <userdefinedtype name="tFuelGauge">{Good,Empty}</userdefinedtype> -->
     <userdefinedtype name="tSolenoid">{Open,Closed}</userdefinedtype>
     
     <humanoperator name="pPilot">
@@ -13,10 +13,10 @@
         <inputvariable name="iSolenoid3" userdefinedtype="tSolenoid"/>
         <inputvariable name="iSolenoid4" userdefinedtype="tSolenoid"/>
         
-        <inputvariable name="iFuelStatus1" userdefinedtype="tSolenoid"/>
-        <inputvariable name="iFuelStatus2" userdefinedtype="tSolenoid"/>
-        <inputvariable name="iFuelStatus3" userdefinedtype="tSolenoid"/>
-        <inputvariable name="iFuelStatus4" userdefinedtype="tSolenoid"/>
+        <inputvariable name="iFuelStatus1" userdefinedtype="tFuelStatus"/>
+        <inputvariable name="iFuelStatus2" userdefinedtype="tFuelStatus"/>
+        <inputvariable name="iFuelStatus3" userdefinedtype="tFuelStatus"/>
+        <inputvariable name="iFuelStatus4" userdefinedtype="tFuelStatus"/>
         
         <inputvariable name="iBoostPumpState" userdefinedtype="tOnOff"/>  
         <inputvariable name="iEngineState" userdefinedtype="tOnOff"/>  
@@ -36,31 +36,31 @@
                 <precondition>iFuelStatus1 = Absent AND iSolenoid1 = Open OR iFuelStatus2 = Absent AND iSolenoid2 = Open OR iFuelStatus3 = Absent AND iSolenoid3 = Open OR iFuelStatus4 = Absent AND iSolenoid4 = Open</precondition>
                 <decomposition operator="ord">
                     <activity name="aDeselectTanks">
-                        <decomposition operator="or_seq">
+                        <decomposition operator="and_seq">
                             <activity name="aDeselectTank1">
                                 <precondition>iFuelStatus1 = Absent AND iSolenoid1 = Open</precondition>
-                                <completioncondition>iFuelStatus1 = Absent AND iSolenoid1 = Closed</completioncondition>
+                                <completioncondition>iFuelStatus1 = Present OR (iFuelStatus1 = Absent AND iSolenoid1 = Closed)</completioncondition>
                                 <decomposition operator="ord">
                                     <action humanaction="hToggleSolenoid1"></action>
                                 </decomposition>
                             </activity>
                             <activity name="aDeselectTank2">
                                 <precondition>iFuelStatus2 = Absent AND iSolenoid2 = Open</precondition>
-                                <completioncondition>iFuelStatus2 = Absent AND iSolenoid2 = Closed</completioncondition>
+                                <completioncondition>iFuelStatus2 = Present OR (iFuelStatus2 = Absent AND iSolenoid2 = Closed)</completioncondition>
                                 <decomposition operator="ord">
                                     <action humanaction="hToggleSolenoid2"></action>
                                 </decomposition>
                             </activity>
                             <activity name="aDeselectTank3">
                                 <precondition>iFuelStatus3 = Absent AND iSolenoid3 = Open</precondition>
-                                <completioncondition>iFuelStatus3 = Absent AND iSolenoid3 = Closed</completioncondition>
+                                <completioncondition>iFuelStatus3 = Present OR (iFuelStatus3 = Absent AND iSolenoid3 = Closed)</completioncondition>
                                 <decomposition operator="ord">
                                     <action humanaction="hToggleSolenoid3"></action>
                                 </decomposition>
                             </activity>
                             <activity name="aDeselectTank4">
                                 <precondition>iFuelStatus4 = Absent AND iSolenoid4 = Open</precondition>
-                                <completioncondition>iFuelStatus4 = Absent AND iSolenoid4 = Closed</completioncondition>
+                                <completioncondition>iFuelStatus4 = Present OR (iFuelStatus4 = Absent AND iSolenoid4 = Closed)</completioncondition>
                                 <decomposition operator="ord">
                                     <action humanaction="hToggleSolenoid4"></action>
                                 </decomposition>
